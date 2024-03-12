@@ -1,17 +1,17 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
-import React, { useState } from 'react';
-import './App.scss';
-import cn from 'classnames';
+import React, { useState } from "react";
+import "./App.scss";
+import cn from "classnames";
 
-import usersFromServer from './api/users';
-import categoriesFromServer from './api/categories';
-import productsFromServer from './api/products';
+import usersFromServer from "./api/users";
+import categoriesFromServer from "./api/categories";
+import productsFromServer from "./api/products";
 
 const fullProducts = productsFromServer.map((curProduct) => {
   const category = categoriesFromServer.find(
-    currentCategory => curProduct.categoryId === currentCategory.id,
+    (currentCategory) => curProduct.categoryId === currentCategory.id
   ); // find by product.categoryId
-  const user = usersFromServer.find(person => person.id === category.ownerId); // find by category.ownerId
+  const user = usersFromServer.find((person) => person.id === category.ownerId); // find by category.ownerId
   const fullProduct = {
     ...curProduct,
     category,
@@ -25,9 +25,9 @@ function getPreparedProducts(products, { filterName, query }) {
   const queryNormalize = query.trim().toLowerCase();
   let preparedGoods = [...products];
 
-  if (filterName !== 'All') {
+  if (filterName !== "All") {
     preparedGoods = [...products].filter(
-      product => product.owner.name === filterName,
+      (product) => product.owner.name === filterName
     );
   }
 
@@ -45,12 +45,17 @@ function getPreparedProducts(products, { filterName, query }) {
 }
 
 export const App = () => {
-  const [filterName, setFilterName] = useState('All');
-  const [query, setQuery] = useState('');
+  const [filterName, setFilterName] = useState("All");
+  const [query, setQuery] = useState("");
   const preparedProducts = getPreparedProducts(fullProducts, {
     filterName,
     query,
   });
+
+  const resetListSorting = () => {
+    setFilterName("All");
+    setQuery("");
+  };
 
   return (
     <div className="section">
@@ -63,17 +68,17 @@ export const App = () => {
 
             <p className="panel-tabs has-text-weight-bold">
               <a
-                className={cn({ 'is-active': filterName === 'All' })}
+                className={cn({ "is-active": filterName === "All" })}
                 data-cy="FilterAllUsers"
                 href="#/"
-                onClick={() => setFilterName('All')}
+                onClick={() => setFilterName("All")}
               >
                 All
               </a>
 
-              {usersFromServer.map(user => (
+              {usersFromServer.map((user) => (
                 <a
-                  className={cn({ 'is-active': user.name === filterName })}
+                  className={cn({ "is-active": user.name === filterName })}
                   data-cy="FilterUser"
                   href="#/"
                   key={user.id}
@@ -109,7 +114,7 @@ export const App = () => {
                       type="button"
                       className="delete"
                       value=""
-                      onClick={() => setQuery('')}
+                      onClick={() => setQuery("")}
                     />
                   </span>
                 )}
@@ -125,28 +130,15 @@ export const App = () => {
                 All
               </a>
 
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1 is-info"
-                href="#/"
-              >
-                Category 1
-              </a>
-
-              <a data-cy="Category" className="button mr-2 my-1" href="#/">
-                Category 2
-              </a>
-
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1 is-info"
-                href="#/"
-              >
-                Category 3
-              </a>
-              <a data-cy="Category" className="button mr-2 my-1" href="#/">
-                Category 4
-              </a>
+              {categoriesFromServer.map((category) => (
+                <a
+                  data-cy="Category"
+                  className="button mr-2 my-1 is-info"
+                  href="#/"
+                >
+                  {category.title}
+                </a>
+              ))}
             </div>
 
             <div className="panel-block">
@@ -154,6 +146,7 @@ export const App = () => {
                 data-cy="ResetAllButton"
                 href="#/"
                 className="button is-link is-outlined is-fullwidth"
+                onClick={resetListSorting}
               >
                 Reset all filters
               </a>
@@ -216,7 +209,7 @@ export const App = () => {
               </thead>
 
               <tbody>
-                {preparedProducts.map(product => (
+                {preparedProducts.map((product) => (
                   <tr data-cy="Product" key={product.id}>
                     <td className="has-text-weight-bold" data-cy="ProductId">
                       {product.id}
@@ -228,9 +221,9 @@ export const App = () => {
                     <td
                       data-cy="ProductUser"
                       className={
-                        product.owner.sex === 'f'
-                          ? 'has-text-danger'
-                          : 'has-text-link'
+                        product.owner.sex === "f"
+                          ? "has-text-danger"
+                          : "has-text-link"
                       }
                     >
                       {product.owner.name}
