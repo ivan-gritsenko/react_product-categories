@@ -1,17 +1,17 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
-import React, { useState } from 'react';
-import './App.scss';
-import cn from 'classnames';
+import React, { useState } from "react";
+import "./App.scss";
+import cn from "classnames";
 
-import usersFromServer from './api/users';
-import categoriesFromServer from './api/categories';
-import productsFromServer from './api/products';
+import usersFromServer from "./api/users";
+import categoriesFromServer from "./api/categories";
+import productsFromServer from "./api/products";
 
 const fullProducts = productsFromServer.map((curProduct) => {
   const category = categoriesFromServer.find(
-    currentCategory => curProduct.categoryId === currentCategory.id,
+    (currentCategory) => curProduct.categoryId === currentCategory.id
   ); // find by product.categoryId
-  const user = usersFromServer.find(person => person.id === category.ownerId); // find by category.ownerId
+  const user = usersFromServer.find((person) => person.id === category.ownerId); // find by category.ownerId
   const fullProduct = {
     ...curProduct,
     category,
@@ -21,13 +21,16 @@ const fullProducts = productsFromServer.map((curProduct) => {
   return fullProduct;
 });
 
-function getPreparedProducts(products, { filterName, query, filterBC }) {
+function getPreparedProducts(
+  products,
+  { filterName, query, filterByCategories }
+) {
   const queryNormalize = query.trim().toLowerCase();
   let preparedGoods = [...products];
 
-  if (filterName !== 'All') {
+  if (filterName !== "All") {
     preparedGoods = [...products].filter(
-      product => product.owner.name === filterName,
+      (product) => product.owner.name === filterName
     );
   }
 
@@ -41,20 +44,18 @@ function getPreparedProducts(products, { filterName, query, filterBC }) {
     });
   }
 
-  if (filterBC.length) {
-    preparedGoods = preparedGoods.filter((product) => {
-      const isInclude = filterBC.includes(product.category);
-
-      return isInclude;
-    });
+  if (filterByCategories.length) {
+    preparedGoods = preparedGoods.filter((product) =>
+      filterByCategories.includes(product.category)
+    );
   }
 
   return preparedGoods;
 }
 
 export const App = () => {
-  const [filterName, setFilterName] = useState('All');
-  const [query, setQuery] = useState('');
+  const [filterName, setFilterName] = useState("All");
+  const [query, setQuery] = useState("");
   const [filterByCategories, setFilterByCategories] = useState([]);
   const preparedProducts = getPreparedProducts(fullProducts, {
     filterName,
@@ -63,14 +64,14 @@ export const App = () => {
   });
 
   const resetListSorting = () => {
-    setFilterName('All');
-    setQuery('');
+    setFilterName("All");
+    setQuery("");
   };
 
   const addItem = (item) => {
     if (filterByCategories.includes(item)) {
       setFilterByCategories([
-        ...filterByCategories.filter(category => category !== item),
+        ...filterByCategories.filter((category) => category !== item),
       ]);
     } else {
       setFilterByCategories([...filterByCategories, item]);
@@ -88,17 +89,17 @@ export const App = () => {
 
             <p className="panel-tabs has-text-weight-bold">
               <a
-                className={cn({ 'is-active': filterName === 'All' })}
+                className={cn({ "is-active": filterName === "All" })}
                 data-cy="FilterAllUsers"
                 href="#/"
-                onClick={() => setFilterName('All')}
+                onClick={() => setFilterName("All")}
               >
                 All
               </a>
 
-              {usersFromServer.map(user => (
+              {usersFromServer.map((user) => (
                 <a
-                  className={cn({ 'is-active': user.name === filterName })}
+                  className={cn({ "is-active": user.name === filterName })}
                   data-cy="FilterUser"
                   href="#/"
                   key={user.id}
@@ -134,7 +135,7 @@ export const App = () => {
                       type="button"
                       className="delete"
                       value=""
-                      onClick={() => setQuery('')}
+                      onClick={() => setQuery("")}
                     />
                   </span>
                 )}
@@ -145,19 +146,19 @@ export const App = () => {
               <a
                 href="#/"
                 data-cy="AllCategories"
-                className={cn('button', 'is-success', 'mr-6', {
-                  'is-outlined': filterByCategories.length !== 0,
+                className={cn("button", "is-success", "mr-6", {
+                  "is-outlined": filterByCategories.length !== 0,
                 })}
                 onClick={() => setFilterByCategories([])}
               >
                 All
               </a>
 
-              {categoriesFromServer.map(category => (
+              {categoriesFromServer.map((category) => (
                 <a
                   data-cy="Category"
-                  className={cn('button', 'mr-2', 'my-1', {
-                    'is-info': filterByCategories.includes(category),
+                  className={cn("button", "mr-2", "my-1", {
+                    "is-info": filterByCategories.includes(category),
                   })}
                   href="#/"
                   onClick={() => addItem(category)}
@@ -235,7 +236,7 @@ export const App = () => {
               </thead>
 
               <tbody>
-                {preparedProducts.map(product => (
+                {preparedProducts.map((product) => (
                   <tr data-cy="Product" key={product.id}>
                     <td className="has-text-weight-bold" data-cy="ProductId">
                       {product.id}
@@ -247,9 +248,9 @@ export const App = () => {
                     <td
                       data-cy="ProductUser"
                       className={
-                        product.owner.sex === 'f'
-                          ? 'has-text-danger'
-                          : 'has-text-link'
+                        product.owner.sex === "f"
+                          ? "has-text-danger"
+                          : "has-text-link"
                       }
                     >
                       {product.owner.name}
